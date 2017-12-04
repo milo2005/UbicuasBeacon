@@ -8,24 +8,21 @@ import com.estimote.coresdk.recognition.packets.Beacon
 import com.estimote.coresdk.service.BeaconManager
 import unicauca.movil.beacons.receivers.BeaconReceiver
 
-class App : Application(), BeaconManager.BeaconMonitoringListener {
+class App : Application(), BeaconManager.BeaconRangingListener {
+
 
     override fun onCreate() {
         super.onCreate()
         val manager = BeaconManager(this)
         manager.connect {
-            manager.startMonitoring(BeaconRegion("pinturas", null,
+            manager.startRanging(BeaconRegion("pinturas", null,
                     null, null))
-            manager.setMonitoringListener(this)
+            manager.setRangingListener(this)
         }
     }
 
-    override fun onExitedRegion(beaconRegion: BeaconRegion?) {
-
-    }
-
-    override fun onEnteredRegion(beaconRegion: BeaconRegion?, beacons: MutableList<Beacon>) {
-        val major = beacons[0].major
+    override fun onBeaconsDiscovered(beaconRegion: BeaconRegion?, beacons: MutableList<Beacon>?) {
+        val major = beacons!![0].major
         val minor = beacons[0].minor
 
         val intent =  Intent(BeaconReceiver.ACTION)
@@ -34,5 +31,7 @@ class App : Application(), BeaconManager.BeaconMonitoringListener {
 
         sendBroadcast(intent)
     }
+
+
 
 }
